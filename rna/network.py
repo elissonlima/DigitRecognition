@@ -30,15 +30,19 @@ class RNA:
         self.layers = []
         self.nlayers = 0
         self.lr = learning_rate
+        self.layers_outputs = []
 
     def add_layer(self, num_neurons, activate_function):
-        layer = {"act_fun":RNA.functions[activate_function], "num_neurons":num_neurons}
+        layer = {"act_fun":RNA.functions[activate_function], "num_neurons":num_neurons,
+                 "act_fun_de":RNA.functions[activate_function+"_"]}
         if self.nlayers > 0:
-            self.layers[self.nlayers-1]["weights"] = np.random.rand(self.layers[self.nlayers-1]["num_neurons"] + 1, num_neurons)
+            self.layers[self.nlayers-1]["weights"] = 2 * np.random.random_sample((self.layers[self.nlayers-1]["num_neurons"] + 1, num_neurons)) - 1
         self.layers.append(layer)
         self.nlayers += 1
 
     def process_layer(self, input, lay_num):
+        self.layers_outputs.append(input)
+
         if lay_num == self.nlayers:
             out = self.layers[lay_num - 1]["act_fun"](input)
             return out
@@ -53,15 +57,37 @@ class RNA:
         if input.shape[0] != self.layers[0]["num_neurons"]:
             raise Exception("Incorrect input size. Must be " + str(self.netconfig[0]))
 
-        return self.process_layer(input, 1)
+        self.layers_outputs = []
+        result = self.process_layer(input, 1)
+        self.layers_outputs[-1] = result
+        return result
 
-    def backward(self, layer, output):
+    def backward(self, layer, sensibility):
+        curr_layer = self.layers[layer - 1]
+        aux = (self.lr * sensibility * self.layers_outputs[layer - 1])
+        new_weigths = curr_layer["weights"] + aux[:,np.newaxis]
 
-        pass
+        sensibility_next = curr_layer["act_fun_de"](self.layers_outputs[layer - 1]) \
+                        * np.sum(curr_layer["weights"] * sensibility[:,np.newaxis])
+
+        self.layers[layer - 1]["weights"] = new_weigths
+
+        if layer != 1:
+            self.backward(layer - 1, sensibility_next)
+        else:
+            return
 
     def backpropagation(self, net_output, correct_output):
 
         error = correct_output - net_output
+
+        ##BIAS
+        outs_aux = list(map(lambda x: np.append([1], x), self.layers_outputs[:-1]))
+        outs_aux.append(self.layers_outputs[-1])
+        self.layers_outputs = outs_aux
+
+        sensibility_output = self.layers[self.nlayers-1]["act_fun_de"](self.layers_outputs[-1]) * error
+        self.backward(self.nlayers - 1, sensibility_output)
 
 
 
