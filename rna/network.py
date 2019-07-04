@@ -1,96 +1,67 @@
 import numpy as np
-
+import rna.functions as func
 
 class RNA:
 
-
-    #Neurons activate functions
-    #SIG -> sigmoid logistic
-    #HEV -> heaviside
-    #LIN -> linear
-    #TAN -> hyperbolic tangent
-
-    functions = {
-        "SIG" : np.vectorize(lambda x : (1 / (1 + np.exp(-x)))),
-        "HEV" : np.vectorize(lambda x : 1 if x >=0 else 0),
-        "LIN" : np.vectorize(lambda x : x),
-        "TAN" : np.vectorize(lambda x : (np.exp(x) - np.exp(-x))/(np.exp(x) + np.exp(-x))),
-        ##derivates
-        "SIG_" : np.vectorize(lambda x : x * (1 - x)),
-        "HEV_" : np.vectorize(lambda x : 1),
-        "LIN_" : np.vectorize(lambda x : 1),
-        "TAN_" : np.vectorize(lambda x : (1 - x^2))
-    }
-
-    #nlayers -> layer number
-    #netconfig -> configuration of network, e.g., if nlayers=3
-    #netconfig = [3,3,1] means that network will have
-    #3 neurons in first layer, 3 in hidden layer and 1 in last
     def __init__(self, learning_rate=0.1):
-        self.layers = []
-        self.nlayers = 0
+
         self.lr = learning_rate
-        self.layers_outputs = []
+        #Weights of connection of input layer with first hidden layer
+        self.wi = 2 * np.random.random((785, 50)) - 1
+        #Weights of connection of first hidden layer with second hidden layer
+        self.wh1 = 2 * np.random.random((50, 15)) - 1
+        #Weights of connections of second hidden layer with output layer
+        self.wh2 = 2 * np.random.random((15, 10)) - 1
 
-    def add_layer(self, num_neurons, activate_function):
-        layer = {"act_fun":RNA.functions[activate_function], "num_neurons":num_neurons,
-                 "act_fun_de":RNA.functions[activate_function+"_"]}
-        if self.nlayers > 0:
-            self.layers[self.nlayers-1]["weights"] = 2 * np.random.random_sample((self.layers[self.nlayers-1]["num_neurons"] + 1, num_neurons)) - 1
-        self.layers.append(layer)
-        self.nlayers += 1
+    def predict(self, input):
 
-    def process_layer(self, input, lay_num):
-        self.layers_outputs.append(input)
+        #Output of layer1
+        layer1 = func.sigmoid(np.dot(input, self.wi))
+        #Output of layer2
+        layer2 = func.sigmoid(np.dot(layer1, self.wh1))
+        #Output of network
+        out = func.sigmoid(np.dot(layer2, self.wh2))
 
-        if lay_num == self.nlayers:
-            out = self.layers[lay_num - 1]["act_fun"](input)
-            return out
-        else:
-            input = np.append([1], input) ##BIAS
-            out_l = np.sum(input[:, np.newaxis] * self.layers[lay_num - 1]["weights"], axis=0)
-            out = self.layers[lay_num - 1]["act_fun"](out_l)
-            return self.process_layer(out, lay_num + 1)
+        return out
 
-    def process_input(self, input):
+    def backpropagation(self, input, answer):
 
-        if input.shape[0] != self.layers[0]["num_neurons"]:
-            raise Exception("Incorrect input size. Must be " + str(self.netconfig[0]))
+        # Output of layer1
+        layer1 = func.sigmoid(np.dot(input, self.wi))
+        # Output of layer2
+        layer2 = func.sigmoid(np.dot(layer1, self.wh1))
+        # Output of network
+        out = func.sigmoid(np.dot(layer2, self.wh2))
 
-        self.layers_outputs = []
-        result = self.process_layer(input, 1)
-        self.layers_outputs[-1] = result
-        return result
+        error = answer - out
+        delta_3 = np.multiply(error, func.sigmoid_der(out))
 
-    def backward(self, layer, sensibility):
-        curr_layer = self.layers[layer - 1]
-        aux = (self.lr * sensibility * self.layers_outputs[layer - 1])
-        new_weigths = curr_layer["weights"] + aux[:,np.newaxis]
+        error_2 = np.dot(delta_3, self.wh2.T)
+        delta_2 = np.multiply(error_2, func.sigmoid_der(layer2))
 
-        sensibility_next = curr_layer["act_fun_de"](self.layers_outputs[layer - 1]) \
-                        * np.sum(curr_layer["weights"] * sensibility[:,np.newaxis])
+        error_1 = np.dot(delta_2, self.wh1.T)
+        delta_1 = np.multiply(error_1, func.sigmoid_der(layer1))
 
-        self.layers[layer - 1]["weights"] = new_weigths
+        self.wh2 += self.lr * np.dot(np.array([layer2]*delta_3.shape[0]).T, delta_3).reshape(self.wh2.shape[0], 1)
+        self.wh1 += self.lr * np.dot(np.array([layer1]*delta_2.shape[0]).T, delta_2).reshape(self.wh1.shape[0], 1)
+        self.wi += self.lr * np.dot(np.array([input]*delta_1.shape[0]).T, delta_1).reshape(self.wi.shape[0], 1)
 
-        if layer != 1:
-            self.backward(layer - 1, sensibility_next)
-        else:
-            return
-
-    def backpropagation(self, net_output, correct_output):
-
-        error = correct_output - net_output
-
-        ##BIAS
-        outs_aux = list(map(lambda x: np.append([1], x), self.layers_outputs[:-1]))
-        outs_aux.append(self.layers_outputs[-1])
-        self.layers_outputs = outs_aux
-
-        sensibility_output = self.layers[self.nlayers-1]["act_fun_de"](self.layers_outputs[-1]) * error
-        self.backward(self.nlayers - 1, sensibility_output)
+        return error
 
 
+    def train(self, inputs, answers, epochs):
 
+        for i in range(epochs):
 
+            epoch_error = 0
 
+            print("Epoch " + str(i + 1) + "/" + str(epochs) + ": ", end='')
+            indexes = np.arange(len(inputs))
+            np.random.shuffle(indexes)
 
+            for j in indexes:
+
+                curr_error = self.backpropagation(inputs[j], answers[j])
+                epoch_error += (np.sum(curr_error) ** 2) / len(inputs)
+
+            print("RMSE:" + str(np.sqrt(epoch_error)))
