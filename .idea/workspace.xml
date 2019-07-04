@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="4dafe854-44a8-429f-a31c-a523eca16f64" name="Default Changelist" comment="Initial version of digit recognition.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rna/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/rna/functions.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rna/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/rna/network.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run_recognition.py" beforeDir="false" afterPath="$PROJECT_DIR$/run_recognition.py" afterDir="false" />
     </list>
     <list id="ff93b0ea-24d4-44bb-bfe9-ebdbd9728a0e" name="Revert &quot;Initial commit&quot;" comment="Revert &quot;Initial commit&quot;&#10;&#10;This reverts commit c302c3ee" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,11 +25,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rna/network.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="21" selection-start-line="21" selection-start-column="21" selection-end-line="21" selection-end-column="21" />
+            <state relative-caret-position="180">
+              <caret line="17" column="25" lean-forward="true" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -40,11 +37,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rna/functions.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+            <state relative-caret-position="102">
+              <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -61,9 +58,11 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>sigmoid</find>
+      <find>tanh</find>
     </findStrings>
     <replaceStrings>
       <replace>tanh</replace>
+      <replace>sigmoid</replace>
     </replaceStrings>
   </component>
   <component name="Git.Rebase.Settings">
@@ -82,8 +81,8 @@
         <option value="$PROJECT_DIR$/rna/__init__.py" />
         <option value="$PROJECT_DIR$/tests.py" />
         <option value="$PROJECT_DIR$/run_recognition.py" />
-        <option value="$PROJECT_DIR$/rna/network.py" />
         <option value="$PROJECT_DIR$/rna/functions.py" />
+        <option value="$PROJECT_DIR$/rna/network.py" />
       </list>
     </option>
   </component>
@@ -377,20 +376,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rna/network.py">
+    <entry file="file://$PROJECT_DIR$/rna/functions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="21" selection-start-line="21" selection-start-column="21" selection-end-line="21" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="102">
+          <caret line="6" column="20" selection-start-line="6" selection-start-column="20" selection-end-line="6" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rna/functions.py">
+    <entry file="file://$PROJECT_DIR$/rna/network.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+        <state relative-caret-position="180">
+          <caret line="17" column="25" lean-forward="true" selection-start-line="17" selection-start-column="25" selection-end-line="17" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

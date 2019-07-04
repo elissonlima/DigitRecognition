@@ -16,31 +16,31 @@ class RNA:
     def predict(self, input):
 
         #Output of layer1
-        layer1 = func.tanh(np.dot(input, self.wi))
+        layer1 = func.sigmoid(np.dot(input, self.wi))
         #Output of layer2
-        layer2 = func.tanh(np.dot(layer1, self.wh1))
+        layer2 = func.sigmoid(np.dot(layer1, self.wh1))
         #Output of network
-        out = func.tanh(np.dot(layer2, self.wh2))
+        out = func.sigmoid(np.dot(layer2, self.wh2))
 
         return out
 
     def backpropagation(self, input, answer):
 
         # Output of layer1
-        layer1 = func.tanh(np.dot(input, self.wi))
+        layer1 = func.sigmoid(np.dot(input, self.wi))
         # Output of layer2
-        layer2 = func.tanh(np.dot(layer1, self.wh1))
+        layer2 = func.sigmoid(np.dot(layer1, self.wh1))
         # Output of network
-        out = func.tanh(np.dot(layer2, self.wh2))
+        out = func.sigmoid(np.dot(layer2, self.wh2))
 
         error = answer - out
-        delta_3 = np.multiply(error, func.tanh_der(out))
+        delta_3 = np.multiply(error, func.sigmoid_der(out))
 
         error_2 = np.dot(delta_3, self.wh2.T)
-        delta_2 = np.multiply(error_2, func.tanh_der(layer2))
+        delta_2 = np.multiply(error_2, func.sigmoid_der(layer2))
 
         error_1 = np.dot(delta_2, self.wh1.T)
-        delta_1 = np.multiply(error_1, func.tanh_der(layer1))
+        delta_1 = np.multiply(error_1, func.sigmoid_der(layer1))
 
         self.wh2 += self.lr * np.dot(np.array([layer2]*delta_3.shape[0]).T, delta_3).reshape(self.wh2.shape[0], 1)
         self.wh1 += self.lr * np.dot(np.array([layer1]*delta_2.shape[0]).T, delta_2).reshape(self.wh1.shape[0], 1)
