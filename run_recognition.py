@@ -4,7 +4,9 @@ import cv2
 import numpy as np
 from PIL import Image
 
+
 def translate(x):
+
     if isinstance(x, np.ndarray):
         a = np.nonzero(x==x.max())[0][0]
         return a
@@ -13,7 +15,9 @@ def translate(x):
         np.put(a, x, 1.)
         return a
 
-def getTrainingSet():
+
+def get_training_set():
+
     path_ = os.path.join(".", "samples", "trainingSample")
     answers = [f for f in os.listdir(path_)]
     training_set_path = []
@@ -29,7 +33,8 @@ def getTrainingSet():
 
     return training_set, answers
 
-def getTestSet():
+
+def get_test_set():
 
     path_ = os.path.join(".", "samples", "testSample")
     ##We divide the images by 255 to avoid overflow warnings on sigmoid functions
@@ -42,15 +47,15 @@ if __name__ == "__main__":
     net = rna.RNA()
 
     print("Loading training set... ", end='')
-    training_set, answers = getTrainingSet()
+    training_set, answers = get_training_set()
     print("OK")
 
     print("Loading test set... ", end='')
-    testSet = getTestSet()
+    testSet = get_test_set()
     print("OK")
 
     print("Starting training...")
-    net.train(training_set, answers, 100)
+    net.train(training_set, answers, 1000)
     print("Train finished")
 
     img = Image.fromarray((testSet[0] * 255).astype(np.uint8).reshape((28, 28)))

@@ -10,4 +10,4 @@ def tanh(x):
     return (np.exp(x) - np.exp(-x))/(np.exp(x) + np.exp(-x))
 
 def tanh_der(x):
-    return (1 - x^2)
+    return (1 - (x**2))
